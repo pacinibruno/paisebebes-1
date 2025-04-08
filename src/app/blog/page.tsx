@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 type Post = {
   id: number
@@ -23,14 +24,14 @@ export default async function BlogListPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Últimos posts</h1>
       {posts?.map((post) => (
-        <a
+        <Link
           key={post.id}
           href={`/blog/${post.slug}`}
           className="block p-4 border rounded hover:bg-gray-100"
         >
           <h2 className="text-xl">{post.title}</h2>
           <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
-        </a>
+        </Link>
       ))}
     </div>
   )
