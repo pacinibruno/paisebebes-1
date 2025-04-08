@@ -1,5 +1,3 @@
-'use client'
-
 import { supabase } from '@/lib/supabase'
 
 type Post = {
@@ -12,9 +10,10 @@ type Post = {
 
 export default async function BlogListPage() {
   const { data: posts, error } = await supabase
-    .from<Post>('posts')
+    .from('posts')
     .select('id, title, slug, created_at')
     .order('created_at', { ascending: false })
+    .returns<Post[]>()
 
   if (error) {
     return <p>Erro ao carregar posts: {error.message}</p>
