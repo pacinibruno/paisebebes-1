@@ -1,7 +1,14 @@
 // src/app/blog/[slug]/page.tsx
 import { supabase } from '@/lib/supabase'
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string
+  }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function BlogPostPage({ params }: Props) {
   const { data: post, error } = await supabase
     .from('posts')
     .select('*')
