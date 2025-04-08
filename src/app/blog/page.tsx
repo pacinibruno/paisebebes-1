@@ -13,7 +13,7 @@ export default async function BlogListPage() {
   const { data: posts, error } = await supabase
     .from('posts')
     .select('id, title, slug, created_at')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) as { data: Post[] | null, error: any }
 
   if (error) {
     return <p>Erro ao carregar posts: {error.message}</p>
