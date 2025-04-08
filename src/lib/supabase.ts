@@ -7,8 +7,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-// Create a single supabase client for interacting with your database
-export const createServerSupabaseClient = () => {
+export function createServerSupabaseClient() {
   return createClient(
     supabaseUrl,
     supabaseAnonKey,
@@ -16,12 +15,10 @@ export const createServerSupabaseClient = () => {
       auth: {
         persistSession: false,
       },
-      global: {
-        fetch: fetch,
-      },
+      // ❌ remove isso ↓↓↓
+      // global: {
+      //   fetch: fetch,
+      // },
     }
   )
 }
-
-// Para uso em componentes do servidor (Server Components)
-export const supabase = createServerSupabaseClient()
