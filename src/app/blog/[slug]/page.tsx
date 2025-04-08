@@ -8,7 +8,7 @@ type Props = {
   searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage() {
   const { data: post, error } = await supabase
     .from('posts')
     .select('*')
