@@ -1,19 +1,20 @@
-// src/app/blog/page.tsx
+'use client'
+
 import { supabase } from '@/lib/supabase'
 
 type Post = {
   id: number
   title: string
   slug: string
-  content: string
+  content?: string // opcional porque não está sendo retornado nesse select
   created_at: string
 }
 
 export default async function BlogListPage() {
   const { data: posts, error } = await supabase
-    .from('posts')
+    .from<Post>('posts')
     .select('id, title, slug, created_at')
-    .order('created_at', { ascending: false }) as { data: Post[] | null, error: any }
+    .order('created_at', { ascending: false })
 
   if (error) {
     return <p>Erro ao carregar posts: {error.message}</p>
