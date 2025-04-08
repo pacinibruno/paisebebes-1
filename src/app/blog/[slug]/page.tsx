@@ -1,12 +1,8 @@
-import { supabase } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 
-export default async function BlogPostPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  if (!params?.slug) return notFound()
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const supabase = createServerSupabaseClient()
 
   const { data: post, error } = await supabase
     .from('posts')
@@ -14,7 +10,9 @@ export default async function BlogPostPage({
     .eq('slug', params.slug)
     .single()
 
-  if (error || !post) return notFound()
+  if (error || !post) {
+    return notFound()
+  }
 
   return (
     <article className="prose max-w-2xl mx-auto p-4">
@@ -25,4 +23,18 @@ export default async function BlogPostPage({
       <div dangerouslySetInnerHTML={{ __html: post.content }} />
     </article>
   )
+}
+
+import { createServerSupabaseClient } from '@/lib/supabase'
+
+export async function generateStaticParams() {
+  const supabase = createServerSupabaseClient()
+
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('slug')
+
+  return (posts || []).map((post) => ({
+    slug: post.slug,
+  }))
 }
