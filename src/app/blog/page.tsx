@@ -17,13 +17,23 @@ export default async function BlogListPage() {
     .returns<Post[]>()
 
   if (error) {
-    return <p>Erro ao carregar posts: {error.message}</p>
+    console.error('Error fetching posts:', error)
+    return <p>Erro ao carregar posts. Por favor, tente novamente mais tarde.</p>
+  }
+
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">Últimos posts</h1>
+        <p>Nenhum post encontrado.</p>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Últimos posts</h1>
-      {posts?.map((post) => (
+      {posts.map((post) => (
         <Link
           key={post.id}
           href={`/blog/${post.slug}`}

@@ -13,36 +13,56 @@ export default async function BlogPostPage({ params }: Props) {
     return notFound()
   }
 
-  const { data: post, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('slug', params.slug)
-    .single()
+  try {
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('slug', params.slug)
+      .single()
 
-  if (error || !post) {
+    if (error) {
+      console.error('Error fetching post:', error)
+      throw error
+    }
+
+    if (!post) {
+      return notFound()
+    }
+
+    return (
+      <article className="prose max-w-2xl mx-auto p-4">
+        <h1>{post.title}</h1>
+        <p className="text-sm text-gray-500">
+          Publicado em {new Date(post.created_at).toLocaleDateString()}
+        </p>
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      </article>
+    )
+  } catch (error) {
+    console.error('Error in BlogPostPage:', error)
     return notFound()
   }
-
-  return (
-    <article className="prose max-w-2xl mx-auto p-4">
-      <h1>{post.title}</h1>
-      <p className="text-sm text-gray-500">
-        Publicado em {new Date(post.created_at).toLocaleDateString()}
-      </p>
-      <div dangerouslySetInnerHTML={{ __html: post.content }} />
-    </article>
-  )
 }
 
 // Pré-renderiza os slugs no build (SSG)
 export async function generateStaticParams() {
-  const { data: posts } = await supabase
-    .from('posts')
-    .select('slug')
+  try {
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('slug')
 
-  if (!posts) return []
+    if (error) {
+      console.error('Error fetching slugs:', error)
+      return []
+    }
 
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+    if (!posts) return []
+
+    return posts.map((post) => ({
+      slug: post.slug,
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
 }
